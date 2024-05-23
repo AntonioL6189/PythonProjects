@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+</head>
+<body>
+
+<h1>Quiz</h1>
+
+<script>
+    var questions = [
+        {
+            question: "What's my Full Name",
+            options: ["Antonio Legrier", "Anthony Legrier", "Anton Lagrier", "Antonio Lagraer"]
+        },
+        {
+            question: "What's my Favorite color",
+            options: ["Gray", "Blue", "Green", "Red"]
+        },
+        // Add more questions here...
+    ];
+
+    function startQuiz() {
+        var quizContainer = document.createElement("div");
+
+        questions.forEach(function (q, index) {
+            var questionElement = document.createElement("div");
+            questionElement.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+            q.options.forEach(function (option, optionIndex) {
+                var optionElement = document.createElement("input");
+                optionElement.setAttribute("type", "radio");
+                optionElement.setAttribute("name", `question${index}`);
+                optionElement.setAttribute("value", option);
+                var labelElement = document.createElement("label");
+                labelElement.innerHTML = option;
+                questionElement.appendChild(optionElement);
+                questionElement.appendChild(labelElement);
+                questionElement.appendChild(document.createElement("br"));
+            });
+            quizContainer.appendChild(questionElement);
+        });
+
+        var submitButton = document.createElement("button");
+        submitButton.innerHTML = "Submit";
+        submitButton.addEventListener("click", function () {
+            var selectedOptions = [];
+            questions.forEach(function (q, index) {
+                var selectedOption = document.querySelector(`input[name='question${index}']:checked`);
+                if (selectedOption) {
+                    selectedOptions.push(selectedOption.value);
+                } else {
+                    selectedOptions.push(null);
+                }
+            });
+            console.log("Selected options:", selectedOptions);
+            // You can add code here to grade the quiz and display the results
+        });
+        quizContainer.appendChild(submitButton);
+
+        document.body.appendChild(quizContainer);
+    }
+
+    startQuiz();
+</script>
+
+</body>
+</html>
