@@ -3,67 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
+    <title>Heart Animation Quiz</title>
+    <style>
+        .heart {
+            animation: heartbeat 1s infinite alternate;
+            font-size: 50px;
+            transition: font-size 0.5s ease-in-out;
+        }
+
+        @keyframes heartbeat {
+            from { font-size: 50px; }
+            to { font-size: 80px; }
+        }
+    </style>
 </head>
 <body>
 
-<h1>Quiz</h1>
+<h1>Heart Animation Quiz</h1>
+
+<div id="heart" class="heart">❤️</div>
+
+<div id="quiz">
+    <h2>Quiz Questions</h2>
+    <div id="questions">
+        <!-- Quiz questions will be dynamically added here -->
+    </div>
+    <button onclick="submitQuiz()">Submit</button>
+</div>
 
 <script>
-    var questions = [
-        {
-            question: "What's my Full Name",
-            options: ["Antonio Legrier", "Anthony Legrier", "Anton Lagrier", "Antonio Lagraer"]
-        },
-        {
-            question: "What's my Favorite color",
-            options: ["Gray", "Blue", "Green", "Red"]
-        },
-        // Add more questions here...
-    ];
+    var heart = document.getElementById("heart");
+    var quizContainer = document.getElementById("questions");
 
-    function startQuiz() {
-        var quizContainer = document.createElement("div");
-
-        questions.forEach(function (q, index) {
-            var questionElement = document.createElement("div");
-            questionElement.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
-            q.options.forEach(function (option, optionIndex) {
-                var optionElement = document.createElement("input");
-                optionElement.setAttribute("type", "radio");
-                optionElement.setAttribute("name", `question${index}`);
-                optionElement.setAttribute("value", option);
-                var labelElement = document.createElement("label");
-                labelElement.innerHTML = option;
-                questionElement.appendChild(optionElement);
-                questionElement.appendChild(labelElement);
-                questionElement.appendChild(document.createElement("br"));
-            });
-            quizContainer.appendChild(questionElement);
+    var Questions = {
+        "What's my Full Name": 
+            ["Antonio Legrier", "Anthony Legrier", "Anton Lagrier", "Antonio Lagraer"],
+        "What's my Favorite color": 
+            ["Gray", "Blue", "Green", "Red"],
+        "What's my Favorite book series":
+            ["Overlord", "Mistborn", "Dungeon Born", "Solo Leveling"],
+        "What's my Favorite Song":
+            ["Location", "Halo", "Touchy Feely Fool", "Happy if you're happy"],
+        "What's my Favorite Tv Show":
+            ["Yu-gi-oh! GX", "Overlord", "Pokemon", "Yu-gi-oh!"],
+        "What did I always want to be when I grew up":
+            ["Lawyer", "Doctor", "Teacher", "Your Husband"],
+        "What's my least favorite food":
+            ["Pancakes", "Stir fry", "Lasagna", "Tuna"],
+        "What game do I always play with Ivan":
+            ["Tft", "Yu-gi-oh", "Overwatch", "Pokemon'"],
+        "What makes me cry":
+            ["Thinking about my sister", "Sad movies", "My life", "Depression"],
+        "What do I like to doing the most":
+            ["Bothering Russ", "Reading", "Criticizing people", "Sleeping"],
+        "Who's my favorite person":
+            ["Russ", "Myself", "Anyone rich", "AJR"]
+    };
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    function createQuestionElement(question, options, index) {
+        var questionElement = document.createElement("div");
+        questionElement.innerHTML = `<p>${question}</p>`;
+        options.forEach(function (option, optionIndex) {
+            var optionElement = document.createElement("input");
+            optionElement.setAttribute("type", "radio");
+            optionElement.setAttribute("name", `question${index}`);
+            optionElement.setAttribute("value", option);
+            var labelElement = document.createElement("label");
+            labelElement.innerHTML = option;
+            questionElement.appendChild(optionElement);
+            questionElement.appendChild(labelElement);
+            questionElement.appendChild(document.createElement("br"));
         });
-
-        var submitButton = document.createElement("button");
-        submitButton.innerHTML = "Submit";
-        submitButton.addEventListener("click", function () {
-            var selectedOptions = [];
-            questions.forEach(function (q, index) {
-                var selectedOption = document.querySelector(`input[name='question${index}']:checked`);
-                if (selectedOption) {
-                    selectedOptions.push(selectedOption.value);
-                } else {
-                    selectedOptions.push(null);
-                }
-            });
-            console.log("Selected options:", selectedOptions);
-            // You can add code here to grade the quiz and display the results
-        });
-        quizContainer.appendChild(submitButton);
-
-        document.body.appendChild(quizContainer);
+        return questionElement;
     }
 
-    startQuiz();
+    function submitQuiz() {
+        var selectedAnswers = [];
+        var correctAnswers = [];
+        var questionsElements = document.querySelectorAll("#questions div");
+        var questions = Object.values(Questions);
+        var questionKeys = Object.keys(Questions);
+        
+        questions.forEach(function (question, index) {
+            var selectedOption = questionsElements[index].querySelector("input[name='question" + index + "']:checked");
+            selectedAnswers.push(selectedOption ? selectedOption.value : null);
+            correctAnswers.push(question[0]);
+        });
+
+        var numCorrect = 0;
+        selectedAnswers.forEach(function (answer, index) {
+            if (answer === correctAnswers[index]) {
+                numCorrect++;
+            }
+        });
+
+        if (numCorrect === questions.length) {
+            // All answers correct
+            heart.style.fontSize = "80px";
+        } else {
+            // At least one answer wrong
+            heart.style.fontSize = "40px";
+        }
+    }
+
+    // Dynamically create question elements
+    Object.keys(Questions).forEach(function (question, index) {
+        var questionElement = createQuestionElement(question, Questions[question], index);
+        quizContainer.appendChild(questionElement);
+    });
 </script>
 
 </body>
 </html>
+
